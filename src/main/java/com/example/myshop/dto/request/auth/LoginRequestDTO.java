@@ -10,7 +10,7 @@ public class LoginRequestDTO {
     @NotBlank
     private String username;
 
-    @NotBlank
-    @Min(value = 6)
     private String password;
+
+    private String type;
 }

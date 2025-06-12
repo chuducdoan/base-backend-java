@@ -1,5 +1,6 @@
 package com.example.myshop.dto.response.auth;
 
+import com.example.myshop.dto.response.user.UserLoginResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,11 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginResponseDTO {
-    private String accessToken;
-    private String refreshToken;
-    private String fullName;
+    private String access_token;
+    private String refresh_token;
+    private UserLoginResponse user;
 
-    public static LoginResponseDTO from(String accessToken, String refreshToken, String fullName) {
-        return new LoginResponseDTO(accessToken, refreshToken, fullName);
+    public static LoginResponseDTO from(String accessToken, String refreshToken, UserLoginResponse user) {
+        return new LoginResponseDTO(accessToken, refreshToken, user);
     }
 }

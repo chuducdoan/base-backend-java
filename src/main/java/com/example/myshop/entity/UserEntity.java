@@ -35,12 +35,24 @@ public class UserEntity extends BaseEntity {
     @Column(name = "is_active")
     private Integer isActive;
 
+    @Column(name = "type")
+    private String type;
+
+    @Column(name = "role")
+    private String role;
+
+    @Column(name = "is_verify")
+    private Integer is_verify;
+
     public UserEntity( String username, String password, String fullName,
-                       String email, Integer isActive) {
+                       String email, Integer isActive, String type, String role, Integer is_verify) {
         this.username = username;
         this.password = password;
         this.fullName = fullName;
         this.email = email;
         this.isActive = isActive;
+        this.type = type;
+        this.role = role;
+        this.is_verify = is_verify;
     }
 }
