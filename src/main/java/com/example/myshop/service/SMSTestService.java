@@ -9,6 +9,7 @@ import com.example.myshop.repository.SMSTestRepository;
 import com.example.myshop.response.BaseResponse;
 import com.example.myshop.response.ResponseCode;
 import com.example.myshop.response.SmsTest.SmsTestResponseCode;
+import com.example.myshop.utils.GsonCustom;
 import com.example.myshop.utils.MapperUtils;
 import com.example.myshop.utils.Util;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,17 +45,14 @@ public class SMSTestService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    private final Gson gson;
-
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public SMSTestService(Gson gson, RedisTemplate<String, Object> redisTemplate) {
-        this.gson = gson;
+    public SMSTestService( RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     public BaseResponse create(SMSTestRequestDTO smsTestDTO) {
-        log.info("Begin create smsTest with request: ", gson.toJson(smsTestDTO));
+        log.info("Begin create smsTest with request: ", GsonCustom.getGsonBuilder().toJson(smsTestDTO));
         try {
             // Check require field messageId, keyword, sender, destination, shortMessage
             if(null == smsTestDTO
@@ -114,58 +112,58 @@ public class SMSTestService {
         }
     }
 
-    public void sendSmsDataToQueue() {
-        List<SMSTestEntity> listSMSEntity = smsTestRepository.findAll();
-        log.info("Sending data from list request through queue message");
-        try {
-            for (SMSTestEntity data: listSMSEntity) {
-                rabbitTemplate.convertAndSend(exchange, routingKey, data);
-                log.info("Sent SMS: {}", data);
-            }
-        } catch (Exception e) {
-            log.error("Error sending data to queue: {}", e.getMessage());
-        }
-    }
+//    public void sendSmsDataToQueue() {
+//        List<SMSTestEntity> listSMSEntity = smsTestRepository.findAll();
+//        log.info("Sending data from list request through queue message");
+//        try {
+//            for (SMSTestEntity data: listSMSEntity) {
+//                rabbitTemplate.convertAndSend(exchange, routingKey, data);
+//                log.info("Sent SMS: {}", data);
+//            }
+//        } catch (Exception e) {
+//            log.error("Error sending data to queue: {}", e.getMessage());
+//        }
+//    }
 
     private String generateUniqueMessageId() {
         // Tạo messageId duy nhất, có thể sử dụng UUID hoặc một phương pháp khác
         return java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 32);
     }
 
-    @RabbitListener(queues = "sms.mt.dev")
-    public void consumerSMSTest(byte[] message) {
-        try {
-            SMSTestResponseDTO smsTestDTO = Util.convertMessageFromByteToDTO(message);
-            String key = smsTestDTO.getShortMessage() + ":" + smsTestDTO.getDestination();
-            // Kiểm tra trùng lặp trong redis
-            if (redisTemplate.opsForValue().get(key) == null) {
-                SMSSendRequestDTO smsSendRequestDTO = MapperUtils.toDto(smsTestDTO, SMSSendRequestDTO.class);
-                // Gửi yêu cầu tới api
-                RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<String> responseEntity = restTemplate.postForEntity(SMS_URL, smsSendRequestDTO, String.class);
-                log.info("Sent sms ------");
-                if (responseEntity.getStatusCode().is2xxSuccessful()) {
-                    SMSTestEntity smsTestEntity = smsTestRepository.findById(smsTestDTO.getId())
-                            .orElseThrow(() -> new RuntimeException("SMSTestEntity not found with ID: " + smsTestDTO.getId()));
-                    String status = extractValue(responseEntity.getBody(), "status");
-                    String description = extractValue(responseEntity.getBody(), "description");
-                    smsTestEntity.setStatus(Integer.parseInt(status));
-                    smsTestEntity.setDescription(description);
-                    smsTestEntity.setSentTime(System.currentTimeMillis());
-                    smsTestRepository.save(smsTestEntity);
-                    // Lưu trữ key vào Redis để đánh dấu rằng đã kiểm tra trùng
-                    redisTemplate.opsForValue().set(key, "sent");
-                    log.info("Sent sms success, key: {}", key);
-                } else {
-                    log.error("Sent sms fail: {}", responseEntity.getBody());
-                }
-            } else {
-                log.info("Messages sent before with key: {}", key);
-            }
-        } catch (Exception e) {
-            log.error("Error processing received message: {}", e.getMessage());
-        }
-    }
+//    @RabbitListener(queues = "sms.mt.dev")
+//    public void consumerSMSTest(byte[] message) {
+//        try {
+//            SMSTestResponseDTO smsTestDTO = Util.convertMessageFromByteToDTO(message);
+//            String key = smsTestDTO.getShortMessage() + ":" + smsTestDTO.getDestination();
+//            // Kiểm tra trùng lặp trong redis
+//            if (redisTemplate.opsForValue().get(key) == null) {
+//                SMSSendRequestDTO smsSendRequestDTO = MapperUtils.toDto(smsTestDTO, SMSSendRequestDTO.class);
+//                // Gửi yêu cầu tới api
+//                RestTemplate restTemplate = new RestTemplate();
+//                ResponseEntity<String> responseEntity = restTemplate.postForEntity(SMS_URL, smsSendRequestDTO, String.class);
+//                log.info("Sent sms ------");
+//                if (responseEntity.getStatusCode().is2xxSuccessful()) {
+//                    SMSTestEntity smsTestEntity = smsTestRepository.findById(smsTestDTO.getId())
+//                            .orElseThrow(() -> new RuntimeException("SMSTestEntity not found with ID: " + smsTestDTO.getId()));
+//                    String status = extractValue(responseEntity.getBody(), "status");
+//                    String description = extractValue(responseEntity.getBody(), "description");
+//                    smsTestEntity.setStatus(Integer.parseInt(status));
+//                    smsTestEntity.setDescription(description);
+//                    smsTestEntity.setSentTime(System.currentTimeMillis());
+//                    smsTestRepository.save(smsTestEntity);
+//                    // Lưu trữ key vào Redis để đánh dấu rằng đã kiểm tra trùng
+//                    redisTemplate.opsForValue().set(key, "sent");
+//                    log.info("Sent sms success, key: {}", key);
+//                } else {
+//                    log.error("Sent sms fail: {}", responseEntity.getBody());
+//                }
+//            } else {
+//                log.info("Messages sent before with key: {}", key);
+//            }
+//        } catch (Exception e) {
+//            log.error("Error processing received message: {}", e.getMessage());
+//        }
+//    }
 
     private String extractValue(String json, String key) {
         String searchKey = "\"" + key + "\":\"";

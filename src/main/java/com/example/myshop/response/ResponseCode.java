@@ -12,7 +12,8 @@ public enum ResponseCode implements IResponseCode{
     USERNAME_EXIST("12", "Username already exists"),
     PASSWORD_NO_MATCHES("13", "Password no matching"),
     INVALID_REQUEST("21", "Tham số không hợp lệ"),
-    SYSTEM_ERROR("99", "System error");
+    SYSTEM_ERROR("99", "System error"),
+    FILE_EMPTY("30", "File không tồn tại. Vui lòng upload file hợp lệ");
 
     private String code;
     private String message;
