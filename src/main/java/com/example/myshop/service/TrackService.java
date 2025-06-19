@@ -78,4 +78,19 @@ public class TrackService {
             return BaseResponse.of(ResponseCode.SYSTEM_ERROR);
         }
     }
+
+    public BaseResponse getAllTrack() {
+        log.info("(getAllTrack) start");
+        try {
+            List<TrackEntity> entityList = trackRepository.findAll();
+            List<TrackResponse> trackResponseList = entityList.stream()
+                    .map(entity -> MapperUtils.toDto(entity, TrackResponse.class))
+                    .collect(Collectors.toList());
+            log.info("(getAllTrack) success");
+            return BaseResponse.of(ResponseCode.SUCCESS, trackResponseList);
+        } catch (Exception e) {
+            log.error("(getAllTrack) false");
+            return BaseResponse.of(ResponseCode.SYSTEM_ERROR);
+        }
+    }
 }

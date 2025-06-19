@@ -27,4 +27,8 @@ public class TrackController {
         return trackService.getListByUser(user);
     }
 
+    @GetMapping
+    public BaseResponse getAll() {
+        return trackService.getAllTrack();
+    }
 }
