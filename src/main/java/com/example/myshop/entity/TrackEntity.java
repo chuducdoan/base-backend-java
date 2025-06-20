@@ -35,5 +35,9 @@ public class TrackEntity extends BaseEntity {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "count_like")
+    private Long countLike;
 
+    @Column(name = "count_play")
+    private Long countPlay;
 }

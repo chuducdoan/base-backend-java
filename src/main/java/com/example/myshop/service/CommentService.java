@@ -66,13 +66,15 @@ public class CommentService {
                 return BaseResponse.of(ResponseCode.NOT_FOUND_TRACK);
             }
 
-            CommentEntity commentEntity = MapperUtils.toEntity(commentRequest, CommentEntity.class);
+            CommentEntity commentEntity = new CommentEntity();
+            commentEntity.setMoment(commentRequest.getMoment());
+            commentEntity.setContent(commentRequest.getContent());
             commentEntity.setTrack(track);
             commentEntity.setUser(user);
 
             // Lưu vào DB
             commentRepository.save(commentEntity);
-            log.info("(create comment) track success");
+            log.info("(create comment) success");
             return BaseResponse.of(ResponseCode.SUCCESS);
         } catch (Exception e) {
             log.error("(create comment) false");

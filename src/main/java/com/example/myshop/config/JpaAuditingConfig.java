@@ -23,7 +23,10 @@ public class JpaAuditingConfig {
         return () -> {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             log.info("(JpaAuditingConfig) {}", gson.toJson(auth));
-            if (auth == null || !auth.isAuthenticated()) return Optional.empty();
+            if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+                throw new RuntimeException("Bạn cần đăng nhập để bình luận");
+//                return Optional.empty();
+            }
 
             // Giả sử user của bạn implement UserDetails và có getId()
             log.info("(JpaAuditingConfig) getPrincipal {}", gson.toJson(auth.getPrincipal()));

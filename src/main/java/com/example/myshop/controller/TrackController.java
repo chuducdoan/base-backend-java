@@ -3,6 +3,7 @@ package com.example.myshop.controller;
 import com.example.myshop.dto.request.smstest.SMSTestRequestDTO;
 import com.example.myshop.dto.request.track.TrackByUserRequest;
 import com.example.myshop.dto.request.track.TrackCommentRequest;
+import com.example.myshop.dto.request.track.TrackIncreaseViewRequest;
 import com.example.myshop.dto.request.track.TrackRequest;
 import com.example.myshop.response.BaseResponse;
 import com.example.myshop.response.ResponseCode;
@@ -41,5 +42,10 @@ public class TrackController {
     @PostMapping("/comment")
     public BaseResponse getListCommentByTrackById(@RequestBody TrackCommentRequest trackCommentRequest) {
         return trackService.getListCommentByTrack(trackCommentRequest);
+    }
+
+    @PostMapping("/increase-view")
+    public BaseResponse increaseView(@RequestBody TrackIncreaseViewRequest request) {
+        return trackService.increaseView(request);
     }
 }

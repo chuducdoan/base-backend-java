@@ -2,6 +2,7 @@ package com.example.myshop.service;
 
 import com.example.myshop.dto.request.track.TrackByUserRequest;
 import com.example.myshop.dto.request.track.TrackCommentRequest;
+import com.example.myshop.dto.request.track.TrackIncreaseViewRequest;
 import com.example.myshop.dto.request.track.TrackRequest;
 import com.example.myshop.dto.request.user.ChangePasswordRequest;
 import com.example.myshop.dto.request.user.UserRequest;
@@ -135,6 +136,30 @@ public class TrackService {
             return BaseResponse.of(ResponseCode.SUCCESS, entityList.getContent());
         } catch (Exception e) {
             log.error("(getListCommentByTrack) false");
+            return BaseResponse.of(ResponseCode.SYSTEM_ERROR);
+        }
+    }
+
+    public BaseResponse increaseView(TrackIncreaseViewRequest request) {
+        log.info("(increaseView) request: {}", GsonCustom.getGsonBuilder().toJson(request));
+        try {
+            if (request.getTrackId() == null) {
+                log.info("(increaseView) invalid request");
+                return BaseResponse.of(ResponseCode.INVALID_REQUEST);
+            }
+
+            TrackEntity trackEntity = trackRepository.findById(request.getTrackId()).orElse(null);
+            if (trackEntity == null) {
+                return BaseResponse.of(ResponseCode.NOT_FOUND_TRACK);
+            }
+
+            trackEntity.setCountPlay(trackEntity.getCountPlay() + 1);
+            trackRepository.save(trackEntity);
+
+            log.info("(increaseView) track success");
+            return BaseResponse.of(ResponseCode.SUCCESS);
+        } catch (Exception e) {
+            log.error("(increaseView) false");
             return BaseResponse.of(ResponseCode.SYSTEM_ERROR);
         }
     }

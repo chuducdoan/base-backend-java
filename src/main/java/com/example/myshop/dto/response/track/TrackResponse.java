@@ -21,4 +21,9 @@ public class TrackResponse {
     private String imgUrl;
 
     private String category;
+
+    private Long countLike;
+
+    private Long countPlay;
+
 }
