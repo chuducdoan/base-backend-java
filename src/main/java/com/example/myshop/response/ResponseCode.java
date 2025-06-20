@@ -13,6 +13,8 @@ public enum ResponseCode implements IResponseCode{
     PASSWORD_NO_MATCHES("13", "Password no matching"),
     INVALID_REQUEST("21", "Tham số không hợp lệ"),
     SYSTEM_ERROR("99", "System error"),
+    NOT_FOUND_DATA("40", "Not found data"),
+    NOT_FOUND_TRACK("41", "Not found track"),
     FILE_EMPTY("30", "File không tồn tại. Vui lòng upload file hợp lệ");
 
     private String code;

@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http .cors().and() // cấu hình CORS để cho phép các yêu cầu từ các nguồn khác nhau
                 .csrf().disable() // tắt báo vệ CSRF (thích hợp khi sử dụng JWT)
                 .authorizeRequests()
-                    .antMatchers("/api/v1/auth/**", "/uploads/**").permitAll() // Cho phép tất cả các yêu cầu đến đường dẫn ... mà không cần xác thực
+                    .antMatchers("/api/v1/auth/**", "/uploads/**", "/api/v1/tracks/*").permitAll() // Cho phép tất cả các yêu cầu đến đường dẫn ... mà không cần xác thực
                     .anyRequest().authenticated() // Yêu cầu xác thực cho tất cả các yêu cầu khác
                 .and()
                 .sessionManagement()

@@ -18,7 +18,6 @@ import java.util.Optional;
 public class JpaAuditingConfig {
     private static final Gson gson = new Gson();
 
-
     @Bean
     public AuditorAware<Integer> auditorProvider() {
         return () -> {
